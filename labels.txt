@@ -1,2 +1,0 @@
-0 High Risk
-1 Low Risk

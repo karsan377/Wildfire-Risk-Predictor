@@ -111,6 +111,7 @@
             formData.append('image', imageFile);
 
             try {
+                // Send the image and city data to the Flask backend for processing
                 const response = await fetch('http://localhost:5000/assess-risk', {
                     method: 'POST',
                     body: formData
