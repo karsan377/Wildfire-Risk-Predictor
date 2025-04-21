@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wildfire Risk Detector</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #e74c3c;
+            text-align: center;
+        }
+        form {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        label {
+            display: block;
+            margin: 15px 0 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin-top: 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #c0392b;
+        }
+        #result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .error {
+            color: #e74c3c;
+        }
+        .success {
+            color: #27ae60;
+        }
+        .warning {
+            color: #f39c12;
+        }
+    </style>
+</head>
+<body>
+    <h1>Wildfire Risk Detector</h1>
+
+    <form id="risk-form">
+        <label for="city">City:</label>
+        <input type="text" id="city" name="city" placeholder="Enter city name" required>
+
+        <label for="image">Upload Image of Area:</label>
+        <input type="file" id="image" name="image" accept="image/*" required>
+
+        <button type="submit">Check Fire Risk</button>
+    </form>
+
+    <div class="loading" id="loading">
+        <p>Analyzing risk...</p>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        document.getElementById("risk-form").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            
+            const city = document.getElementById("city").value;
+            const imageFile = document.getElementById("image").files[0];
+            const resultDiv = document.getElementById("result");
+            const loadingDiv = document.getElementById("loading");
+
+            // Reset UI
+            resultDiv.innerHTML = '';
+            resultDiv.className = '';
+            loadingDiv.style.display = 'block';
+
+            const formData = new FormData();
+            formData.append('city', city);
+            formData.append('image', imageFile);
+
+            try {
+                const response = await fetch('http://localhost:5000/assess-risk', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                loadingDiv.style.display = 'none';
+
+                if (data.error) {
+                    resultDiv.textContent = `Error: ${data.error}`;
+                    resultDiv.className = 'error';
+                } else {
+                    resultDiv.innerHTML = `
+                        <p>Fire Risk: <span class="${getRiskClass(data.fire_risk)}">${data.fire_risk}</span></p>
+                        <div style="margin-top: 20px; text-align: left;">
+                            <p><strong>Details:</strong></p>
+                            <p>City: ${data.details.city}</p>
+                            <p>Temperature: ${data.details.temperature}°C</p>
+                            <p>Humidity: ${data.details.humidity}%</p>
+                            <p>Wind Speed: ${data.details.wind_speed} m/s</p>
+                            <p>Image Risk Score: ${data.details.image_risk_score}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                loadingDiv.style.display = 'none';
+                resultDiv.textContent = `Network Error: ${error.message}`;
+                resultDiv.className = 'error';
+                console.error('Error:', error);
+            }
+        });
+
+        function getRiskClass(risk) {
+            if (risk.includes('Extreme') || risk.includes('High')) return 'error';
+            if (risk.includes('Moderate')) return 'warning';
+            return 'success';
+        }
+    </script>
+</body>
+</html>
