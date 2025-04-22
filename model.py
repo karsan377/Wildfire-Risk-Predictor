@@ -1,17 +1,20 @@
 import os
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import GlobalAveragePooling2D, Dense, Dropout
+from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from sklearn.metrics import classification_report
+import matplotlib.pyplot as plt
+
 
 # Parameters
-img_size = (64, 64)  # You can increase this to 128x128 if your images are large
+img_size = (128, 128)  # MobileNetV2 expects at least 96x96
 batch_size = 32
 data_dir = '/Users/karthik/Desktop/Projects/Wildfire/model'
 
-# 1. Data generators (Keras will handle labels based on folder names)
+# 1. Data generators
 train_datagen = ImageDataGenerator(rescale=1./255, validation_split=0.2)
 
 train_generator = train_datagen.flow_from_directory(
@@ -32,35 +35,47 @@ val_generator = train_datagen.flow_from_directory(
     shuffle=False
 )
 
-# 2. Build the CNN
-model = Sequential([
-    Conv2D(32, (3,3), activation='relu', input_shape=(*img_size, 3)),
-    MaxPooling2D(2,2),
-    
-    Conv2D(64, (3,3), activation='relu'),
-    MaxPooling2D(2,2),
-    
-    Flatten(),
-    Dense(64, activation='relu'),
-    Dropout(0.5),
-    Dense(1, activation='sigmoid')  # Binary classification
-])
+# 2. Load MobileNetV2 base
+base_model = MobileNetV2(input_shape=(*img_size, 3), include_top=False, weights='imagenet')
+base_model.trainable = False  # Freeze the base
 
-# 3. Compile the model
+# 3. Add custom classification head
+x = base_model.output
+x = GlobalAveragePooling2D()(x)
+x = Dropout(0.3)(x)
+x = Dense(64, activation='relu')(x)
+output = Dense(1, activation='sigmoid')(x)  # Binary classification
+
+model = Model(inputs=base_model.input, outputs=output)
+
+# 4. Compile
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
-# 4. Train the model
+# 5. Train
 history = model.fit(
     train_generator,
     validation_data=val_generator,
     epochs=10
 )
 
-# 5. Evaluate
+# 🔍 Add this block right here
+import matplotlib.pyplot as plt
+plt.figure(figsize=(10, 6))
+plt.plot(history.history['loss'], label='Training Loss', marker='o')
+plt.plot(history.history['val_loss'], label='Validation Loss', marker='o')
+plt.title('Loss Curve Over Epochs')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+# 6. Evaluate
 val_generator.reset()
 y_true = val_generator.classes
 y_pred = model.predict(val_generator) > 0.5
 print(classification_report(y_true, y_pred))
 
-# 6. Save the model
-model.save('wildfire_cnn_model.h5')
+# 7. Save the model
+model.save('wildfire_transfer_model.h5')

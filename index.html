@@ -1,154 +1,300 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wildfire Risk Detector</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            line-height: 1.6;
-        }
-        h1 {
-            color: #e74c3c;
-            text-align: center;
-        }
-        form {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        label {
-            display: block;
-            margin: 15px 0 5px;
-            font-weight: bold;
-        }
-        input[type="text"], input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        button {
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            margin-top: 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 100%;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #c0392b;
-        }
-        #result {
-            margin-top: 30px;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-        }
-        .loading {
-            display: none;
-            text-align: center;
-            margin: 20px 0;
-        }
-        .error {
-            color: #e74c3c;
-        }
-        .success {
-            color: #27ae60;
-        }
-        .warning {
-            color: #f39c12;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Camp•veri•FIRE 🔥 – Your Verified Safe Camp</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, rgba(255, 99, 71, 0.8), rgba(255, 69, 0, 0.8)),
+                  url('https://www.w3schools.com/w3images/fire.jpg') no-repeat center center fixed;
+      background-size: cover;
+      padding: 20px;
+      margin: 0;
+    }
+
+    .phone-frame {
+      max-width: 375px;
+      margin: 40px auto;
+      padding: 20px;
+      border: 16px solid #333;
+      border-radius: 36px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+      background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+      position: relative;
+      min-height: 700px;
+    }
+
+    .phone-frame::before {
+      content: '';
+      width: 60px;
+      height: 20px;
+      background: #555;
+      border-radius: 10px;
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .header-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex-direction: row-reverse;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      color: #e74c3c;
+      margin: 0;
+      font-size: 32px;
+      text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.6);
+    }
+
+    form {
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: bold;
+    }
+
+    .city-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .city-row input[type="text"] {
+      flex: 1;
+    }
+
+    input[type="text"], input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    button, .secondary-button {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      padding: 10px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s;
+    }
+
+    button:hover, .secondary-button:hover {
+      background-color: #c0392b;
+    }
+
+    .secondary-button {
+      white-space: nowrap;
+    }
+
+    #submit-btn {
+      width: 100%;
+      margin-top: 20px;
+      font-size: 16px;
+      padding: 12px;
+    }
+
+    #result {
+      margin-top: 30px;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 15px;
+      font-weight: bold;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .error {
+      color: #e74c3c;
+    }
+
+    .success {
+      color: #27ae60;
+    }
+
+    .warning {
+      color: #f39c12;
+    }
+
+    .extreme {
+      color: #e74c3c;
+      font-weight: bold;
+    }
+
+    .high {
+      color: #c0392b;
+      font-weight: bold;
+    }
+
+    .moderate {
+      color: #f39c12;
+      font-weight: bold;
+    }
+
+    .low {
+      color: #2ecc71;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-    <h1>Wildfire Risk Detector</h1>
-
+    
+  <div class="phone-frame">
+    <div class="header-container">
+      <img src="logo.png" width="35px" height="35px">
+      <h1>Camp veriFIRE</h1>
+    </div>
+    
     <form id="risk-form">
-        <label for="city">City:</label>
-        <input type="text" id="city" name="city" placeholder="Enter city name" required>
+      <label for="city">City:</label>
+      <div class="city-row">
+        <input type="text" id="city" name="city" placeholder="Enter city name" required />
+        <button type="button" class="secondary-button" onclick="saveCityOffline()">Save</button>
+      </div>
 
-        <label for="image">Upload Image of Area:</label>
-        <input type="file" id="image" name="image" accept="image/*" required>
+      <label for="image">Upload Image of Area:</label>
+      <input type="file" id="image" name="image" accept="image/*" required />
 
-        <button type="submit">Check Fire Risk</button>
+      <button type="submit" id="submit-btn">Check Fire Risk</button>
     </form>
 
     <div class="loading" id="loading">
-        <p>Analyzing risk...</p>
+      <p>Analyzing risk...</p>
     </div>
 
     <div id="result"></div>
+  </div>
 
-    <script>
-        document.getElementById("risk-form").addEventListener("submit", async function(event) {
-            event.preventDefault();
-            
-            const city = document.getElementById("city").value;
-            const imageFile = document.getElementById("image").files[0];
-            const resultDiv = document.getElementById("result");
-            const loadingDiv = document.getElementById("loading");
+  <script>
+    function saveCityOffline() {
+      const city = document.getElementById("city").value.trim();
+      const resultDiv = document.getElementById("result");
 
-            // Reset UI
-            resultDiv.innerHTML = '';
-            resultDiv.className = '';
-            loadingDiv.style.display = 'block';
+      if (!city) {
+        resultDiv.textContent = "Please enter a city before saving.";
+        resultDiv.className = "error";
+        return;
+      }
 
-            const formData = new FormData();
-            formData.append('city', city);
-            formData.append('image', imageFile);
+      fetch('http://localhost:5000/verify-city', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ city })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          resultDiv.textContent = `Error: ${data.error}`;
+          resultDiv.className = "error";
+        } else {
+          localStorage.setItem("savedCity", city);
+          resultDiv.textContent = `City "${city}" saved for offline use.`;
+          resultDiv.className = "success";
+        }
+      })
+      .catch(err => {
+        resultDiv.textContent = `Network error: ${err.message}`;
+        resultDiv.className = "error";
+      });
+    }
 
-            try {
-                // Send the image and city data to the Flask backend for processing
-                const response = await fetch('http://localhost:5000/assess-risk', {
-                    method: 'POST',
-                    body: formData
-                });
+    document.getElementById("risk-form").addEventListener("submit", async function(event) {
+      event.preventDefault();
 
-                const data = await response.json();
-                loadingDiv.style.display = 'none';
+      const savedCity = localStorage.getItem("savedCity");
+      const cityInput = document.getElementById("city");
+      const imageFile = document.getElementById("image").files[0];
+      const resultDiv = document.getElementById("result");
+      const loadingDiv = document.getElementById("loading");
 
-                if (data.error) {
-                    resultDiv.textContent = `Error: ${data.error}`;
-                    resultDiv.className = 'error';
-                } else {
-                    resultDiv.innerHTML = `
-                        <p>Fire Risk: <span class="${getRiskClass(data.fire_risk)}">${data.fire_risk}</span></p>
-                        <div style="margin-top: 20px; text-align: left;">
-                            <p><strong>Details:</strong></p>
-                            <p>City: ${data.details.city}</p>
-                            <p>Temperature: ${data.details.temperature}°C</p>
-                            <p>Humidity: ${data.details.humidity}%</p>
-                            <p>Wind Speed: ${data.details.wind_speed} m/s</p>
-                            <p>Image Risk Score: ${data.details.image_risk_score}</p>
-                        </div>
-                    `;
-                }
-            } catch (error) {
-                loadingDiv.style.display = 'none';
-                resultDiv.textContent = `Network Error: ${error.message}`;
-                resultDiv.className = 'error';
-                console.error('Error:', error);
-            }
+      const city = cityInput.value || savedCity;
+
+      if (!city || !imageFile) {
+        resultDiv.textContent = "Please enter a city and select an image.";
+        resultDiv.className = "error";
+        return;
+      }
+
+      resultDiv.innerHTML = '';
+      resultDiv.className = '';
+      loadingDiv.style.display = 'block';
+
+      const formData = new FormData();
+      formData.append('city', city);
+      formData.append('image', imageFile);
+
+      try {
+        const response = await fetch('http://localhost:5000/assess-risk', {
+          method: 'POST',
+          body: formData
         });
 
-        function getRiskClass(risk) {
-            if (risk.includes('Extreme') || risk.includes('High')) return 'error';
-            if (risk.includes('Moderate')) return 'warning';
-            return 'success';
+        const data = await response.json();
+        loadingDiv.style.display = 'none';
+
+        if (data.error) {
+          resultDiv.textContent = `Error: ${data.error}`;
+          resultDiv.className = 'error';
+        } else {
+          resultDiv.innerHTML = `
+            <p>Fire Risk: <span class="${getRiskClass(data.fire_risk)}">${data.fire_risk}</span></p>
+            <div style="margin-top: 20px; text-align: left;">
+              <p><strong>Details:</strong></p>
+              <p>City: ${data.details.city}</p>
+              <p>Temperature: ${data.details.temperature}°C</p>
+              <p>Humidity: ${data.details.humidity}%</p>
+              <p>Wind Speed: ${data.details.wind_speed} m/s</p>
+              <p>Image Risk Score: ${data.details.image_risk_score}</p>
+              <p>Final Risk Score: ${data.details.final_risk_score}</p>
+            </div>
+          `;
         }
-    </script>
+      } catch (error) {
+        loadingDiv.style.display = 'none';
+        resultDiv.textContent = `Network Error: ${error.message}`;
+        resultDiv.className = 'error';
+      }
+    });
+
+    function getRiskClass(risk) {
+      if (risk.includes('Extreme')) return 'extreme';
+      if (risk.includes('High')) return 'high';
+      if (risk.includes('Moderate')) return 'moderate';
+      return 'low';
+    }
+
+    // Autofill saved city on page load
+    window.addEventListener("DOMContentLoaded", () => {
+      const saved = localStorage.getItem("savedCity");
+      if (saved) {
+        document.getElementById("city").value = saved;
+      }
+    });
+  </script>
 </body>
 </html>
