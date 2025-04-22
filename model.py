@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 # Parameters
 img_size = (128, 128)  # MobileNetV2 expects at least 96x96
 batch_size = 32
-data_dir = '/Users/karthik/Desktop/Projects/Wildfire/model'
+data_dir = 'fill in image directory'
 
 # 1. Data generators
 train_datagen = ImageDataGenerator(rescale=1./255, validation_split=0.2)
