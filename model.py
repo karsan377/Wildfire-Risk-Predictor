@@ -9,7 +9,7 @@ from sklearn.metrics import classification_report
 # Parameters
 img_size = (64, 64)  # You can increase this to 128x128 if your images are large
 batch_size = 32
-data_dir = '/Users/karthik/Desktop/Projects/Wildfire/model'
+data_dir = 'fill in image directory'
 
 # 1. Data generators (Keras will handle labels based on folder names)
 train_datagen = ImageDataGenerator(rescale=1./255, validation_split=0.2)
