@@ -13,7 +13,7 @@ CORS(app)
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-OPENWEATHER_API_KEY = 'c4d1b1586d9f035fc90c53721dcfd8cd'
+OPENWEATHER_API_KEY = 'PUT API KEY HERE'
 
 # Load the custom wildfire model once
 try:
