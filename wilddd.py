@@ -125,7 +125,7 @@ def assess_risk():
         elif final_risk_score >= 0.7:
             risk = "Moderate ⚠️"
         else:
-            risk = "Low ✅"
+            risk = "Low "
 
         logger.info(f"Risk assessment complete for {city}: {risk}")
         return jsonify({
