@@ -24,22 +24,30 @@ except Exception as e:
     app.model = None
 
 
-def get_weather_for_city(city):
-    """Fetch weather data from OpenWeather API"""
+def get_weather(lat=None, lon=None, city=None):
+    """Fetch weather data from OpenWeather API by coordinates or city name"""
     try:
-        url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={OPENWEATHER_API_KEY}&units=metric"
+        if lat is not None and lon is not None:
+            url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={OPENWEATHER_API_KEY}&units=metric"
+        elif city:
+            url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={OPENWEATHER_API_KEY}&units=metric"
+        else:
+            logger.error("No location provided for weather lookup")
+            return {"error": "No location provided"}
+
         response = requests.get(url)
         response.raise_for_status()
         res = response.json()
-        
+
         if 'main' not in res:
             logger.error(f"Unexpected weather API response: {res}")
             return {"error": "Invalid weather data received"}
-            
+
         return {
             "temp": res["main"]["temp"],
             "humidity": res["main"]["humidity"],
-            "wind": res["wind"]["speed"]
+            "wind": res["wind"]["speed"],
+            "city": res.get("name", city)  # Return city name from API if available
         }
     except Exception as e:
         logger.error(f"Weather API error: {str(e)}")
@@ -71,22 +79,14 @@ def classify_image(image_file):
 
 def calculate_risk_score(weather, img_risk_score):
     """Calculate the continuous risk score using weather conditions and image risk score"""
-    
-    # Multipliers based on weather conditions
     temperature = weather['temp']
     wind_speed = weather['wind']
     humidity = weather['humidity']
-    
-    temperature_multiplier = 1 if temperature <= 21 else 1.2 if temperature <= 32 else 1.5
 
-    # Wind speed multiplier: Stronger winds increase the risk
-    # 10 mph ≈ 4.5 m/s, 30 mph ≈ 13.4 m/s
-    wind_speed_multiplier = 1 if wind_speed <= 4.5 else 1.2 if wind_speed <= 13.4 else 1.5
+    temperature_multiplier = 1 if temperature <= 21 else 1.2 if temperature <= 32 else 1.3
+    wind_speed_multiplier = 1 if wind_speed <= 3.5 else 1.2 if wind_speed <= 8 else 1.5
+    humidity_multiplier = 1 if humidity >= 40 else 1.1 if humidity >= 30 else 1.2
 
-    # Humidity multiplier: Low humidity increases the risk
-    humidity_multiplier = 1 if humidity >= 40 else 1.2 if humidity >= 30 else 1.5
-
-    # Calculate composite risk score
     risk_score = img_risk_score * temperature_multiplier * wind_speed_multiplier * humidity_multiplier
     return risk_score
 
@@ -97,24 +97,33 @@ def assess_risk():
         logger.debug("Received risk assessment request")
 
         city = request.form.get('city')
-        if not city:
-            return jsonify({"error": "City name is required"}), 400
+        lat = request.form.get('latitude')
+        lon = request.form.get('longitude')
+
+        if lat and lon:
+            try:
+                lat = float(lat)
+                lon = float(lon)
+            except ValueError:
+                return jsonify({"error": "Invalid latitude or longitude"}), 400
+            weather = get_weather(lat=lat, lon=lon)
+        elif city:
+            weather = get_weather(city=city)
+        else:
+            return jsonify({"error": "City or coordinates are required"}), 400
+
+        if "error" in weather:
+            return jsonify({"error": weather["error"]}), 400
 
         image = request.files.get('image')
         if not image:
             return jsonify({"error": "Image is required"}), 400
 
-        weather = get_weather_for_city(city)
-        if "error" in weather:
-            return jsonify({"error": weather["error"]}), 400
-
         img_result = classify_image(image)
         if isinstance(img_result, dict) and "error" in img_result:
             return jsonify({"error": img_result["error"]}), 400
 
-        img_risk_score = img_result  # This is a float between 0 and 1 (probability of wildfire risk)
-
-        # Calculate continuous risk score based on weather multipliers and image score
+        img_risk_score = img_result
         final_risk_score = calculate_risk_score(weather, img_risk_score)
 
         # Define risk levels based on the final score
@@ -127,16 +136,16 @@ def assess_risk():
         else:
             risk = "Low ✅"
 
-        logger.info(f"Risk assessment complete for {city}: {risk}")
+        logger.info(f"Risk assessment complete for {weather.get('city', city)}: {risk}")
         return jsonify({
             "fire_risk": risk,
             "details": {
-                "city": city,
+                "city": weather.get("city", city),
                 "temperature": weather['temp'],
                 "humidity": weather['humidity'],
                 "wind_speed": weather['wind'],
-                "image_risk_score": img_risk_score,
-                "final_risk_score": final_risk_score
+                "image_risk_score": round(img_risk_score, 3),
+                "final_risk_score": round(final_risk_score, 3)
             }
         })
 
@@ -154,8 +163,7 @@ def verify_city():
         if not city:
             return jsonify({'error': 'City name is required'}), 400
 
-        # Actually validate the city by trying to get weather data
-        weather = get_weather_for_city(city)
+        weather = get_weather(city=city)
         if "error" in weather:
             return jsonify({"error": weather["error"]}), 400
 

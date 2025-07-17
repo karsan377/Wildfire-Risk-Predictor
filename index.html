@@ -3,25 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Camp•veri•FIRE 🔥 – Your Verified Safe Camp</title>
+  <title>Camp VeriFIRE</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, rgba(255, 99, 71, 0.8), rgba(255, 69, 0, 0.8)),
+      background: linear-gradient(135deg, rgba(255, 99, 71, 0.7), rgba(255, 69, 0, 0.7)),
                   url('https://www.w3schools.com/w3images/fire.jpg') no-repeat center center fixed;
       background-size: cover;
-      padding: 20px;
+      padding: 0;
       margin: 0;
     }
 
     .phone-frame {
-      max-width: 375px;
+      max-width: 400px;
       margin: 40px auto;
       padding: 20px;
       border: 16px solid #333;
       border-radius: 36px;
-      box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
-      background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+      background-color: rgba(255, 255, 255, 0.92);
       position: relative;
       min-height: 700px;
     }
@@ -42,30 +42,29 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      flex-direction: row-reverse;
-      margin-top: 20px;
-      margin-bottom: 10px;
+      gap: 12px;
+      margin: 30px 0 20px;
     }
 
     h1 {
       color: #e74c3c;
       margin: 0;
-      font-size: 32px;
-      text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.6);
+      font-size: 28px;
+      text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
     }
 
     form {
-      background: #f9f9f9;
+      background: #fff;
       padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
     label {
       display: block;
       margin: 15px 0 5px;
-      font-weight: bold;
+      font-weight: 600;
+      color: #333;
     }
 
     .city-row {
@@ -78,26 +77,30 @@
       flex: 1;
     }
 
-    input[type="text"], input[type="file"] {
+    input[type="text"],
+    input[type="file"] {
       width: 100%;
       padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
       box-sizing: border-box;
+      font-size: 14px;
     }
 
-    button, .secondary-button {
+    button,
+    .secondary-button {
       background-color: #e74c3c;
       color: white;
       border: none;
-      padding: 10px 12px;
-      border-radius: 4px;
+      padding: 10px 16px;
+      border-radius: 6px;
       cursor: pointer;
       font-size: 14px;
-      transition: background-color 0.3s;
+      transition: all 0.3s ease;
     }
 
-    button:hover, .secondary-button:hover {
+    button:hover,
+    .secondary-button:hover {
       background-color: #c0392b;
     }
 
@@ -110,33 +113,37 @@
       margin-top: 20px;
       font-size: 16px;
       padding: 12px;
-    }
-
-    #result {
-      margin-top: 30px;
-      padding: 20px;
-      border-radius: 8px;
-      text-align: center;
-      font-size: 15px;
       font-weight: bold;
+      border-radius: 8px;
     }
 
     .loading {
       display: none;
       text-align: center;
       margin: 20px 0;
+      font-weight: bold;
+      color: #555;
+    }
+
+    #result {
+      margin-top: 30px;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: left;
+      font-size: 15px;
+      line-height: 1.6;
+      background: #f9f9f9;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
     }
 
     .error {
       color: #e74c3c;
+      font-weight: bold;
     }
 
     .success {
-      color: #27ae60;
-    }
-
-    .warning {
-      color: #f39c12;
+      color: #2ecc71;
+      font-weight: bold;
     }
 
     .extreme {
@@ -145,7 +152,7 @@
     }
 
     .high {
-      color: #c0392b;
+      color: #d35400;
       font-weight: bold;
     }
 
@@ -158,22 +165,36 @@
       color: #2ecc71;
       font-weight: bold;
     }
+
+    .risk-label {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .details p {
+      margin: 4px 0;
+    }
   </style>
 </head>
 <body>
-    
   <div class="phone-frame">
     <div class="header-container">
-      <img src="logo.png" width="35px" height="35px">
-      <h1>Camp veriFIRE</h1>
+      <img src="logo.png" width="36" height="36" alt="Logo" />
+      <h1>Camp VeriFIRE</h1>
     </div>
-    
+
     <form id="risk-form">
       <label for="city">City:</label>
       <div class="city-row">
-        <input type="text" id="city" name="city" placeholder="Enter city name" required />
+        <input type="text" id="city" name="city" placeholder="Enter city name" />
         <button type="button" class="secondary-button" onclick="saveCityOffline()">Save</button>
       </div>
+
+      <!-- New button for location -->
+      <button type="button" id="use-location-btn" class="secondary-button" style="margin-top:10px;">
+        Use Current Location
+      </button>
+      <div id="location-status" style="margin-top: 6px; font-size: 13px; color: #555;"></div>
 
       <label for="image">Upload Image of Area:</label>
       <input type="file" id="image" name="image" accept="image/*" required />
@@ -182,13 +203,16 @@
     </form>
 
     <div class="loading" id="loading">
-      <p>Analyzing risk...</p>
+      <p>🔥 Analyzing risk...</p>
     </div>
 
     <div id="result"></div>
   </div>
 
   <script>
+    // Store current coordinates here if user allows geolocation
+    let currentCoords = null;
+
     function saveCityOffline() {
       const city = document.getElementById("city").value.trim();
       const resultDiv = document.getElementById("result");
@@ -201,9 +225,7 @@
 
       fetch('http://localhost:5000/verify-city', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ city })
       })
       .then(response => response.json())
@@ -213,7 +235,7 @@
           resultDiv.className = "error";
         } else {
           localStorage.setItem("savedCity", city);
-          resultDiv.textContent = `City "${city}" saved for offline use.`;
+          resultDiv.textContent = `✅ City "${city}" saved for offline use.`;
           resultDiv.className = "success";
         }
       })
@@ -222,6 +244,36 @@
         resultDiv.className = "error";
       });
     }
+
+    // Geolocation button click handler
+    document.getElementById("use-location-btn").addEventListener("click", () => {
+      const statusDiv = document.getElementById("location-status");
+      if (!navigator.geolocation) {
+        statusDiv.textContent = "Geolocation is not supported by your browser.";
+        statusDiv.style.color = "#e74c3c";
+        return;
+      }
+      statusDiv.textContent = "Locating...";
+      statusDiv.style.color = "#555";
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          currentCoords = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          };
+          statusDiv.textContent = `Location found: (${currentCoords.latitude.toFixed(4)}, ${currentCoords.longitude.toFixed(4)})`;
+          statusDiv.style.color = "#2ecc71";
+
+          // Clear city input because we're using coords
+          document.getElementById("city").value = "";
+        },
+        (error) => {
+          statusDiv.textContent = `Error getting location: ${error.message}`;
+          statusDiv.style.color = "#e74c3c";
+        }
+      );
+    });
 
     document.getElementById("risk-form").addEventListener("submit", async function(event) {
       event.preventDefault();
@@ -232,10 +284,10 @@
       const resultDiv = document.getElementById("result");
       const loadingDiv = document.getElementById("loading");
 
-      const city = cityInput.value || savedCity;
+      const city = cityInput.value.trim() || savedCity;
 
-      if (!city || !imageFile) {
-        resultDiv.textContent = "Please enter a city and select an image.";
+      if (!imageFile) {
+        resultDiv.textContent = "Please select an image.";
         resultDiv.className = "error";
         return;
       }
@@ -245,7 +297,20 @@
       loadingDiv.style.display = 'block';
 
       const formData = new FormData();
-      formData.append('city', city);
+
+      if (currentCoords) {
+        formData.append('latitude', currentCoords.latitude);
+        formData.append('longitude', currentCoords.longitude);
+      } else {
+        if (!city) {
+          resultDiv.textContent = "Please enter a city or use current location.";
+          resultDiv.className = "error";
+          loadingDiv.style.display = 'none';
+          return;
+        }
+        formData.append('city', city);
+      }
+
       formData.append('image', imageFile);
 
       try {
@@ -262,15 +327,14 @@
           resultDiv.className = 'error';
         } else {
           resultDiv.innerHTML = `
-            <p>Fire Risk: <span class="${getRiskClass(data.fire_risk)}">${data.fire_risk}</span></p>
-            <div style="margin-top: 20px; text-align: left;">
-              <p><strong>Details:</strong></p>
-              <p>City: ${data.details.city}</p>
-              <p>Temperature: ${data.details.temperature}°C</p>
-              <p>Humidity: ${data.details.humidity}%</p>
-              <p>Wind Speed: ${data.details.wind_speed} m/s</p>
-              <p>Image Risk Score: ${data.details.image_risk_score}</p>
-              <p>Final Risk Score: ${data.details.final_risk_score}</p>
+            <div class="risk-label">Fire Risk: <span class="${getRiskClass(data.fire_risk)}">${data.fire_risk}</span></div>
+            <div class="details">
+              <p><strong>City:</strong> ${data.details.city || city || "Unknown"}</p>
+              <p><strong>Temperature:</strong> ${data.details.temperature}°C</p>
+              <p><strong>Humidity:</strong> ${data.details.humidity}%</p>
+              <p><strong>Wind Speed:</strong> ${data.details.wind_speed} m/s</p>
+              <p><strong>Image Risk Score:</strong> ${data.details.image_risk_score}</p>
+              <p><strong>Final Risk Score:</strong> ${data.details.final_risk_score} / 2.3</p>
             </div>
           `;
         }
@@ -288,11 +352,10 @@
       return 'low';
     }
 
-    // Autofill saved city on page load
     window.addEventListener("DOMContentLoaded", () => {
       const saved = localStorage.getItem("savedCity");
       if (saved) {
-        document.getElementById("city").value = saved;
+        document.getElementById("city").value = saved; 
       }
     });
   </script>
