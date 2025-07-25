@@ -18,10 +18,23 @@ Camp VeriFIRE is a lightweight web service that predicts wildfire risk at a spec
 - OpenWeatherMap API key (free at [openweathermap.org](https://openweathermap.org/))
 
 ### Setup
-bash
-git clone [https://github.com/<your-username>/camp-verifire.git](https://github.com/karsan377/Wildfire-Risk-Predictor.git)
-cd camp-verifire
+```bash
+git clone https://github.com/karsan377/Wildfire-Risk-Predictor.git
+cd Wildfire-Risk-Predictor
 
+# Set up virtual environment
+python3 -m venv venv
+source venv/bin/activate   # On macOS/Linux
+# OR
+venv\Scripts\activate      # On Windows
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Configure environment variable
+echo "OPENWEATHER_API_KEY=your_api_key_here" > .env
+
+##
 ### Set up virtual environment
 python3 -m venv venv
 source venv/bin/activate   # On macOS/Linux
@@ -78,21 +91,3 @@ Response (JSON):
 - Python 3.9+
 - OpenWeatherMap API key (free at [openweathermap.org](https://openweathermap.org/))
 
-### Setup
-```bash
-git clone https://github.com/karsan377/Wildfire-Risk-Predictor.git
-cd Wildfire-Risk-Predictor
-
-# Set up virtual environment
-python3 -m venv venv
-source venv/bin/activate   # On macOS/Linux
-# OR
-venv\Scripts\activate      # On Windows
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Configure environment variable
-echo "OPENWEATHER_API_KEY=your_api_key_here" > .env
-
-##
