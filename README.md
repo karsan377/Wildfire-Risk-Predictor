@@ -49,6 +49,7 @@ Parameters:
 - city or latitude and longitude
 - image
 
+```
 Response JSON:
 {
   "fire_risk": "High",
@@ -61,15 +62,17 @@ Response JSON:
     "final_risk_score": 1.346
   }
 }
+```
 
 ### POST /verify-city
 Checks city validity
 
+```
 Request (JSON):
 { "city": "San Diego" }
 Response (JSON):
 { "message": "City verified successfully" }
-
+```
 
 ### Prerequisites
 - Python 3.9+
