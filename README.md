@@ -1,6 +1,5 @@
 # Camp VeriFIRE: Image + Weather Based Fire Risk Prediction
 
-
 ## Overview
 Camp VeriFIRE is a lightweight web service that predicts wildfire risk at a specific location by combining:
 - A convolutional neural network (CNN) trained on outdoor imagery
@@ -19,11 +18,11 @@ Camp VeriFIRE is a lightweight web service that predicts wildfire risk at a spec
 - OpenWeatherMap API key (free at [openweathermap.org](https://openweathermap.org/))
 
 ### Setup
-```bash
+bash
 git clone [https://github.com/<your-username>/camp-verifire.git](https://github.com/karsan377/Wildfire-Risk-Predictor.git)
 cd camp-verifire
 
-# Set up virtual environment
+### Set up virtual environment
 python3 -m venv venv
 source venv/bin/activate   # On macOS/Linux
 venv\Scripts\activate      # On Windows
@@ -35,21 +34,22 @@ pip install -r requirements.txt
 echo "OPENWEATHER_API_KEY=your_api_key_here" > .env
 
 
-### Usage:
+## Usage
+
+```bash
 python wilddd.py
+```
 
-API Endpoints:
-POST /assess-risk - Classifies an image with weather data
+## API Endpoints
 
-Parameters (form-data):
+### POST /assess-risk
+Classifies an image with weather data
 
-city (optional) OR latitude + longitude
+Parameters:
+- city or latitude and longitude
+- image
 
-image (required): Photo to analyze
-
-Response:
-
-json
+Response JSON:
 {
   "fire_risk": "High",
   "details": {
@@ -62,35 +62,34 @@ json
   }
 }
 
+### POST /verify-city
+Checks city validity
 
-City Verification
-POST /verify-city - Checks city validity
-
-Request:
-
-json
+Request (JSON):
 { "city": "San Diego" }
-Response:
-
-json
+Response (JSON):
 { "message": "City verified successfully" }
-Model Training
-The pretrained model (wildfire_transfer_model.h5) is MobileNetV2-based. To train:
 
-Prepare dataset:
 
-text
-model/
-  ├── class0/  # Low risk
-  └── class1/  # High risk
-Run training:
+### Prerequisites
+- Python 3.9+
+- OpenWeatherMap API key (free at [openweathermap.org](https://openweathermap.org/))
 
-bash
-python train_model.py
-Technical Details
-Accuracy: ~88.2%
+### Setup
+```bash
+git clone https://github.com/karsan377/Wildfire-Risk-Predictor.git
+cd Wildfire-Risk-Predictor
 
-F1-score: 0.86
+# Set up virtual environment
+python3 -m venv venv
+source venv/bin/activate   # On macOS/Linux
+# OR
+venv\Scripts\activate      # On Windows
 
-AUC-ROC: 0.91
+# Install dependencies
+pip install -r requirements.txt
 
+# Configure environment variable
+echo "OPENWEATHER_API_KEY=your_api_key_here" > .env
+
+##
