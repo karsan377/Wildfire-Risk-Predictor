@@ -6,7 +6,8 @@ Camp VeriFIRE is a lightweight web service that predicts wildfire risk at a spec
 - Real-time weather data (temperature, humidity, wind speed) from OpenWeatherMap
 - A locally hosted Flask-based API with a simple HTML/JS frontend
 
-![Screenshot](veriFIRE_frontend.png)
+<img src="veriFIRE_frontend.png" alt="Screenshot" width="400">
+
 
 ## Features
 - Upload a photo of your surroundings (campground, backcountry site, etc.) and get a wildfire risk score
