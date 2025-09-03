@@ -4,7 +4,7 @@
 Camp VeriFIRE is a lightweight web service that predicts wildfire risk at a specific location by combining:
 - A convolutional neural network (CNN) trained on outdoor imagery
 - Real-time weather data (temperature, humidity, wind speed) from OpenWeatherMap
-- A Flask-based API with a simple HTML/JS frontend
+- A locally hosted Flask-based API with a simple HTML/JS frontend
 
 ## Features
 - Upload a photo of your surroundings (campground, backcountry site, etc.) and get a wildfire risk score
@@ -87,7 +87,8 @@ Response (JSON):
 { "message": "City verified successfully" }
 ```
 
-### Prerequisites
-- Python 3.9+
-- OpenWeatherMap API key (free at [openweathermap.org](https://openweathermap.org/))
+### Run Commands (while in project directory)
+- python wilddd.py
+- python -m http.server
+- http://127.0.0.1:8000/ (Open secure context in browser by copy/pasting into browser address bar) 
 
