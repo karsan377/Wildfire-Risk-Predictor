@@ -126,15 +126,15 @@ def assess_risk():
         img_risk_score = img_result
         final_risk_score = calculate_risk_score(weather, img_risk_score)
 
-        # Define risk levels based on the final score
+        
         if final_risk_score >= 2:
-            risk = "Extreme ⚠️"
+            risk = "Extreme"
         elif final_risk_score >= 1.2:
-            risk = "High 🔥"
+            risk = "High"
         elif final_risk_score >= 0.7:
-            risk = "Moderate ⚠️"
+            risk = "Moderate"
         else:
-            risk = "Low ✅"
+            risk = "Low"
 
         logger.info(f"Risk assessment complete for {weather.get('city', city)}: {risk}")
         return jsonify({
