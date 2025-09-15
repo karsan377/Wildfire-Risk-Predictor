@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Camp VeriFIRE</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, rgba(255, 99, 71, 0.7), rgba(255, 69, 0, 0.7)),
+                  url('https://www.w3schools.com/w3images/fire.jpg') no-repeat center center fixed;
+      background-size: cover;
+      padding: 0;
+      margin: 0;
+    }
+
+    .phone-frame {
+      max-width: 400px;
+      margin: 40px auto;
+      padding: 20px;
+      border: 16px solid #333;
+      border-radius: 36px;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+      background-color: rgba(255, 255, 255, 0.92);
+      position: relative;
+      min-height: 700px;
+    }
+
+    .phone-frame::before {
+      content: '';
+      width: 60px;
+      height: 20px;
+      background: #555;
+      border-radius: 10px;
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .header-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 30px 0 20px;
+    }
+
+    h1 {
+      color: #e74c3c;
+      margin: 0;
+      font-size: 28px;
+      text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+    }
+
+    form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .city-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .city-row input[type="text"] {
+      flex: 1;
+    }
+
+    input[type="text"],
+    input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+
+    button,
+    .secondary-button {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    button:hover,
+    .secondary-button:hover {
+      background-color: #c0392b;
+    }
+
+    .secondary-button {
+      white-space: nowrap;
+    }
+
+    #submit-btn {
+      width: 100%;
+      margin-top: 20px;
+      font-size: 16px;
+      padding: 12px;
+      font-weight: bold;
+      border-radius: 8px;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      margin: 20px 0;
+      font-weight: bold;
+      color: #555;
+    }
+
+    #result {
+      margin-top: 30px;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: left;
+      font-size: 15px;
+      line-height: 1.6;
+      background: #f9f9f9;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+
+    .error {
+      color: #e74c3c;
+      font-weight: bold;
+    }
+
+    .success {
+      color: #2ecc71;
+      font-weight: bold;
+    }
+
+    .extreme {
+      color: #e74c3c;
+      font-weight: bold;
+    }
+
+    .high {
+      color: #d35400;
+      font-weight: bold;
+    }
+
+    .moderate {
+      color: #f39c12;
+      font-weight: bold;
+    }
+
+    .low {
+      color: #2ecc71;
+      font-weight: bold;
+    }
+
+    .risk-label {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .details p {
+      margin: 4px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+    <div class="header-container">
+      <img src="logo.png" width="36" height="36" alt="Logo" />
+      <h1>Camp VeriFIRE</h1>
+    </div>
+
+    <form id="risk-form">
+      <label for="city">City:</label>
+      <div class="city-row">
+        <input type="text" id="city" name="city" placeholder="Enter city name" />
+        <button type="button" class="secondary-button" onclick="saveCityOffline()">Save</button>
+      </div>
+
+      <!-- New button for location -->
+      <button type="button" id="use-location-btn" class="secondary-button" style="margin-top:10px;">
+        Use Current Location
+      </button>
+      <div id="location-status" style="margin-top: 6px; font-size: 13px; color: #555;"></div>
+
+      <label for="image">Upload Image of Area:</label>
+      <input type="file" id="image" name="image" accept="image/*" required />
+
+      <button type="submit" id="submit-btn">Check Fire Risk</button>
+    </form>
+
+    <div class="loading" id="loading">
+      <p>🔥 Analyzing risk...</p>
+    </div>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+  // For Render deployment: use relative paths
+  const API_BASE = '';
+
+  let currentCoords = null;
+
+  function saveCityOffline() {
+    const city = document.getElementById("city").value.trim();
+    const resultDiv = document.getElementById("result");
+
+    if (!city) {
+      resultDiv.textContent = "Please enter a city before saving.";
+      resultDiv.className = "error";
+      return;
+    }
+
+    fetch(`${API_BASE}/verify-city`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ city })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        resultDiv.textContent = `Error: ${data.error}`;
+        resultDiv.className = "error";
+      } else {
+        localStorage.setItem("savedCity", city);
+        resultDiv.textContent = `✅ City "${city}" saved for offline use.`;
+        resultDiv.className = "success";
+      }
+    })
+    .catch(err => {
+      resultDiv.textContent = `Network error: ${err.message}`;
+      resultDiv.className = "error";
+    });
+  }
+
+  document.getElementById("use-location-btn").addEventListener("click", () => {
+    const statusDiv = document.getElementById("location-status");
+    if (!navigator.geolocation) {
+      statusDiv.textContent = "Geolocation not supported.";
+      statusDiv.style.color = "#e74c3c";
+      return;
+    }
+    statusDiv.textContent = "Locating...";
+    statusDiv.style.color = "#555";
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        currentCoords = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        };
+        statusDiv.textContent = `Location found: (${currentCoords.latitude.toFixed(4)}, ${currentCoords.longitude.toFixed(4)})`;
+        statusDiv.style.color = "#2ecc71";
+        document.getElementById("city").value = "";
+      },
+      (error) => {
+        statusDiv.textContent = `Error getting location: ${error.message}`;
+        statusDiv.style.color = "#e74c3c";
+      }
+    );
+  });
+
+  document.getElementById("risk-form").addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const savedCity = localStorage.getItem("savedCity");
+    const cityInput = document.getElementById("city");
+    const imageFile = document.getElementById("image").files[0];
+    const resultDiv = document.getElementById("result");
+    const loadingDiv = document.getElementById("loading");
+
+    const city = cityInput.value.trim() || savedCity;
+
+    if (!imageFile) {
+      resultDiv.textContent = "Please select an image.";
+      resultDiv.className = "error";
+      return;
+    }
+
+    resultDiv.innerHTML = '';
+    resultDiv.className = '';
+    loadingDiv.style.display = 'block';
+
+    const formData = new FormData();
+
+    if (currentCoords) {
+      formData.append('latitude', currentCoords.latitude);
+      formData.append('longitude', currentCoords.longitude);
+    } else {
+      if (!city) {
+        resultDiv.textContent = "Please enter a city or use current location.";
+        resultDiv.className = "error";
+        loadingDiv.style.display = 'none';
+        return;
+      }
+      formData.append('city', city);
+    }
+
+    formData.append('image', imageFile);
+
+    try {
+      const response = await fetch(`${API_BASE}/assess-risk`, {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+      loadingDiv.style.display = 'none';
+
+      if (data.error) {
+        resultDiv.textContent = `Error: ${data.error}`;
+        resultDiv.className = 'error';
+      } else {
+        resultDiv.innerHTML = `
+          <div class="risk-label">Fire Risk: <span class="${getRiskClass(data.fire_risk)}">${data.fire_risk}</span></div>
+          <div class="details">
+            <p><strong>City:</strong> ${data.details.city || city || "Unknown"}</p>
+            <p><strong>Temperature:</strong> ${data.details.temperature}°C</p>
+            <p><strong>Humidity:</strong> ${data.details.humidity}%</p>
+            <p><strong>Wind Speed:</strong> ${data.details.wind_speed} m/s</p>
+            <p><strong>Image Risk Score:</strong> ${data.details.image_risk_score}</p>
+            <p><strong>Final Risk Score:</strong> ${data.details.final_risk_score} / 2.3</p>
+          </div>
+        `;
+      }
+    } catch (error) {
+      loadingDiv.style.display = 'none';
+      resultDiv.textContent = `Network Error: ${error.message}`;
+      resultDiv.className = 'error';
+    }
+  });
+
+  function getRiskClass(risk) {
+    if (risk.includes('Extreme')) return 'extreme';
+    if (risk.includes('High')) return 'high';
+    if (risk.includes('Moderate')) return 'moderate';
+    return 'low';
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    const saved = localStorage.getItem("savedCity");
+    if (saved) document.getElementById("city").value = saved; 
+  });
+</script>
+</body>
+</html>

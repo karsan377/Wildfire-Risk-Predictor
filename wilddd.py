@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import requests
 from PIL import Image
@@ -6,8 +6,9 @@ import tensorflow as tf
 import numpy as np
 import logging
 import io
+import os
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='templates')  # Make sure your HTML is in templates/
 CORS(app)
 
 logging.basicConfig(level=logging.DEBUG)
@@ -24,6 +25,7 @@ except Exception as e:
     app.model = None
 
 
+# ------------------ Utility Functions (unchanged) ------------------
 def get_weather(lat=None, lon=None, city=None):
     """Fetch weather data from OpenWeather API by coordinates or city name"""
     try:
@@ -47,7 +49,7 @@ def get_weather(lat=None, lon=None, city=None):
             "temp": res["main"]["temp"],
             "humidity": res["main"]["humidity"],
             "wind": res["wind"]["speed"],
-            "city": res.get("name", city)  # Return city name from API if available
+            "city": res.get("name", city)
         }
     except Exception as e:
         logger.error(f"Weather API error: {str(e)}")
@@ -55,30 +57,27 @@ def get_weather(lat=None, lon=None, city=None):
 
 
 def preprocess_image(image_file):
-    """Preprocess image to match model input requirements"""
     img = Image.open(image_file).convert('RGB')
-    img = img.resize((128, 128))  # Match model input shape
-    img_array = np.array(img) / 255.0  # Normalize pixel values to [0, 1]
-    img_array = np.expand_dims(img_array, axis=0)  # Shape: (1, 128, 128, 3)
+    img = img.resize((128, 128))
+    img_array = np.array(img) / 255.0
+    img_array = np.expand_dims(img_array, axis=0)
     return img_array
 
 
 def classify_image(image_file):
-    """Classify image using the trained model and return the prediction score"""
     if app.model is None:
         return {"error": "Model not available"}
     try:
         processed_image = preprocess_image(image_file)
         prediction = app.model.predict(processed_image)[0][0]
         logger.debug(f"Model raw prediction: {prediction}")
-        return float(prediction)  # Probability of wildfire risk
+        return float(prediction)
     except Exception as e:
         logger.error(f"Image classification error: {str(e)}")
         return {"error": f"Image classification failed: {str(e)}"}
 
 
 def calculate_risk_score(weather, img_risk_score):
-    """Calculate the continuous risk score using weather conditions and image risk score"""
     temperature = weather['temp']
     wind_speed = weather['wind']
     humidity = weather['humidity']
@@ -87,10 +86,16 @@ def calculate_risk_score(weather, img_risk_score):
     wind_speed_multiplier = 1 if wind_speed <= 3.5 else 1.2 if wind_speed <= 8 else 1.5
     humidity_multiplier = 1 if humidity >= 40 else 1.1 if humidity >= 30 else 1.2
 
-    risk_score = img_risk_score * temperature_multiplier * wind_speed_multiplier * humidity_multiplier
-    return risk_score
+    return img_risk_score * temperature_multiplier * wind_speed_multiplier * humidity_multiplier
+
+# ------------------ Frontend Route ------------------
+@app.route('/')
+def index():
+    """Serve the frontend HTML"""
+    return render_template('index.html')
 
 
+# ------------------ API Endpoints (unchanged) ------------------
 @app.route('/assess-risk', methods=['POST'])
 def assess_risk():
     try:
@@ -126,7 +131,6 @@ def assess_risk():
         img_risk_score = img_result
         final_risk_score = calculate_risk_score(weather, img_risk_score)
 
-        
         if final_risk_score >= 2:
             risk = "Extreme"
         elif final_risk_score >= 1.2:
@@ -174,6 +178,7 @@ def verify_city():
         return jsonify({'error': f'Server error: {str(e)}'}), 500
 
 
+# ------------------ Run App ------------------
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))  # Use Render's port if available, else 5000
+    port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
