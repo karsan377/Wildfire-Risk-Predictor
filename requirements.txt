@@ -5,7 +5,6 @@ scipy==1.15.2
 scikit-learn==1.6.1
 tensorflow==2.19.0
 tensorflow-estimator
-tensorflow-macos==2.20.0
 keras==3.9.2
 matplotlib==3.10.1      
 requests==2.32.3        
