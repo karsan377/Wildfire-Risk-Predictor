@@ -223,11 +223,12 @@
         return;
       }
 
-      fetch('http://localhost:5000/verify-city', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ city })
+      fetch('https://wildfire-risk-predictor.onrender.com/verify-city', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ city })
       })
+
       .then(response => response.json())
       .then(data => {
         if (data.error) {
