@@ -93,5 +93,5 @@ Response (JSON):
 ### Run Commands (while in project directory)
 - python wilddd.py
 - python -m http.server
-- http://127.0.0.1:8000/ (Open secure context in browser by copy/pasting into browser address bar) 
+- http://127.0.0.1:5000/ (Open secure context in browser by copy/pasting into browser address bar) 
 
