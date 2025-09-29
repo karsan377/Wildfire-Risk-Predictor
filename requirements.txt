@@ -12,4 +12,5 @@ joblib==1.4.2
 gunicorn==22.0.0
 opencv-python==4.12.0
 
+
            
