@@ -1,4 +1,4 @@
-# Camp VeriFIRE: Image + Weather Based Fire Risk Prediction
+# [Camp VeriFIRE: Image + Weather Based Fire Risk Prediction](Camp_verFire_Report.pdf)
 
 ## Overview
 Camp VeriFIRE is a lightweight web service that predicts wildfire risk at a specific location by combining:
