@@ -1,10 +1,11 @@
-# Camp VeriFIRE: Image + Weather Based Fire Risk Prediction
+# [Camp VeriFIRE: Image + Weather Based Fire Risk Prediction](Camp_verFire_Report.pdf)
 
 ## Overview
 Camp VeriFIRE is a lightweight web service that predicts wildfire risk at a specific location by combining:
 - A convolutional neural network (CNN) trained on outdoor imagery
 - Real-time weather data (temperature, humidity, wind speed) from OpenWeatherMap
 - A locally hosted Flask-based API with a simple HTML/JS frontend
+- Click title to see more!
 
 <img src="veriFIRE_frontend.png" alt="Screenshot" width="400">
 
