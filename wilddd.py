@@ -88,6 +88,7 @@ def calculate_risk_score(weather, img_risk_score):
 
     return img_risk_score * temperature_multiplier * wind_speed_multiplier * humidity_multiplier
 
+
 # ------------------ Frontend Route ------------------
 @app.route('/')
 def index():
@@ -161,8 +162,13 @@ def assess_risk():
 @app.route('/verify-city', methods=['POST'])
 def verify_city():
     try:
-        data = request.get_json()
-        city = data.get('city', '').strip()
+        # Accept JSON
+        if request.is_json:
+            data = request.get_json()
+            city = data.get('city', '').strip()
+        else:
+            # Accept form-data (like your curl -F)
+            city = request.form.get('city', '').strip()
 
         if not city:
             return jsonify({'error': 'City name is required'}), 400
@@ -171,14 +177,16 @@ def verify_city():
         if "error" in weather:
             return jsonify({"error": weather["error"]}), 400
 
-        return jsonify({'message': 'City verified successfully'})
+        return jsonify({'message': f'City "{city}" verified successfully'})
 
     except Exception as e:
         logger.error(f"Error verifying city: {str(e)}")
         return jsonify({'error': f'Server error: {str(e)}'}), 500
 
 
+
+
 # ------------------ Run App ------------------
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))  # Use Render's port if available, else 5000
+    port = int(os.environ.get('PORT', 8080))
     app.run(host='0.0.0.0', port=port, debug=True)
