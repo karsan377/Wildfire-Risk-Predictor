@@ -1,9 +1,0 @@
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.env
-wildfire-env/
-data/
-.DS_Store
-venv/
