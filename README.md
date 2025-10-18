@@ -9,6 +9,8 @@ Camp VeriFIRE is a lightweight web service that predicts wildfire risk at a spec
 
 <img src="veriFIRE_frontend.png" alt="Screenshot" width="400">
 
+## Demo Video
+https://youtu.be/e9HPSopRWoc
 
 ## Features
 - Upload a photo of your surroundings (campground, backcountry site, etc.) and get a wildfire risk score
